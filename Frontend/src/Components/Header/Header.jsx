@@ -1,10 +1,17 @@
 // src/components/Header.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "../../Redux/Slices/authSlice";
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const auth = useSelector((state) => state?.auth?.auth);
+  console.log("auth", auth);
+  useEffect(() => {}, [dispatch]);
 
   return (
     <header className="bg-white shadow-md">
@@ -32,20 +39,26 @@ export default function Header() {
         </nav>
 
         {/* CTAs */}
-        <div className="hidden md:flex space-x-4">
-          <a
-            href="/login"
-            className="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition"
-          >
-            Login
-          </a>
-          <a
-            href="/signup"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Sign Up
-          </a>
-        </div>
+        {!auth ? (
+          <div className="hidden md:flex space-x-4">
+            <Link
+              to="/login"
+              className="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              Sign Up
+            </Link>
+          </div>
+        ) : (
+          <div className="hidden md:flex space-x-4">
+            <button onClick={() => dispatch(logoutUser())}>logout</button>
+          </div>
+        )}
 
         {/* Mobile menu button */}
         <button

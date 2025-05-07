@@ -59,6 +59,7 @@ export default function Dashboard() {
             ))}
           </nav>
           <div className="p-6 border-t">
+            1+1h+s
             <button className="flex items-center text-red-600 hover:text-red-800 transition">
               <FaSignOutAlt className="mr-2" /> Logout
             </button>
