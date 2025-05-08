@@ -5,7 +5,7 @@ import { Navigate, Outlet } from "react-router-dom";
 const ProtectedRoute = ({ children }) => {
   // Select the authenticated user from Redux state
   const user = useSelector((state) => state.auth.auth);
-  console.log("user", user);
+  // console.log("user", user);
 
   // If not authenticated, redirect to login
   if (!user) {

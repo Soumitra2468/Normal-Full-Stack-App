@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../../Utils/AxiosInstance";
 const BACKEND_URI = import.meta.env.VITE_BACKEND_URI;
 
 const initialState = {
-  auth: null,
+  auth: JSON.parse(localStorage.getItem("auth")) || null,
   loading: false,
   error: null,
 };
@@ -13,8 +14,8 @@ export const registerUser = createAsyncThunk(
   "auth-register",
   async (userData) => {
     try {
-      const response = await axios.post(
-        `${BACKEND_URI}/auth/user-register`,
+      const response = await axiosInstance.post(
+        `/auth/user-register`,
         userData
       );
       console.log("User register successfully:", response.data);
@@ -29,14 +30,7 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk("auth-login", async (userData) => {
   try {
-    const response = await axios.post(
-      `${BACKEND_URI}/auth/user-login`,
-      userData,
-      {
-        withCredentials: true, // ← include cookies
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const response = await axiosInstance.post(`/auth/user-login`, userData);
     console.log("User login successfully:", response.data);
     toast.success("User login successfully!");
     return response?.data?.user;
@@ -48,7 +42,7 @@ export const loginUser = createAsyncThunk("auth-login", async (userData) => {
 
 export const logoutUser = createAsyncThunk("auth-logout", async () => {
   try {
-    const response = await axios.get(`${BACKEND_URI}/auth/user-logout`);
+    const response = await axiosInstance.get(`/auth/user-logout`);
     console.log("User logout successfully:", response.data.data);
     toast.success("User logout successfully!");
     return response?.data?.data;
@@ -81,6 +75,7 @@ export const authSlice = createSlice({
         state.loading = false;
         if (action.payload) {
           state.auth = action.payload;
+          localStorage.setItem("auth", JSON.stringify(action.payload));
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -92,9 +87,9 @@ export const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload) {
-          state.auth = null;
-        }
+
+        state.auth = null;
+        localStorage.removeItem("auth");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;

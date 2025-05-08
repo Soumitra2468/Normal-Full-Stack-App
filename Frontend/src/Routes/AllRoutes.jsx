@@ -31,7 +31,14 @@ const AllRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
 
-      <Route path="/dashboard" element={<Dashboard />}>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      >
         <Route path="profile" element={<ProfilePage />} />
       </Route>
 
